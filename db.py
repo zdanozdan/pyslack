@@ -12,11 +12,13 @@ def init_db():
 def new_order():
     conn = sqlite3.connect(LOCAL_DB)
     c = conn.cursor()
-    order = "#zp%s" % random.randint(100,999)
-    data = (order,19221,"@tomasz",datetime.datetime.now().strftime("%m-%d-%Y, %H:%M:%S"),"zamówienie od klienta")
+    order_id = "#zp%s" % random.randint(100,999)
+    data = (order_id,19221,"@tomasz",datetime.datetime.now().strftime("%m-%d-%Y, %H:%M:%S"),"zamówienie od klienta")
     c.execute("INSERT INTO orders VALUES (?,?,?,?,?)", data)
     conn.commit()
+    order = get_order(order_id)
     conn.close()
+    return order
 
 def orders_list():
     conn = sqlite3.connect(LOCAL_DB)
@@ -41,4 +43,11 @@ def get_order(order_id):
     row = dict(zip(row.keys(), row))
     conn.close()
     return row
+
+def delete_order(order_id):
+    conn = sqlite3.connect(LOCAL_DB)
+    c = conn.cursor()
+    c.execute("DELETE FROM orders WHERE order_id='%s'" % order_id)
+    conn.commit()
+    conn.close()
 
